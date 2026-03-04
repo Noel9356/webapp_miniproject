@@ -32,6 +32,19 @@
                         </li>
                     </ul>
                 </div>
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <span class="navbar-text text-light me-2">@User.Identity.Name</span>
+                    <a asp-controller="Account" asp-action="DeleteAccount" class="btn btn-sm btn-danger me-2">Delete Account</a>
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-secondary">Sign out</button>
+                    </form>
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="Login" class="btn btn-sm btn-light me-2">Sign in</a>
+                    <a asp-controller="Account" asp-action="SignUp" class="btn btn-sm btn-primary">Sign up</a>
+                }
             </div>
         </nav>
     </header>

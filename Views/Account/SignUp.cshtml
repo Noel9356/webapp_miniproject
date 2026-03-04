@@ -1,0 +1,48 @@
+@{
+    ViewData["Title"] = "Sign Up";
+    var error = ViewBag.Error as string;
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-sm-8 col-md-5 col-lg-4">
+
+            <h2 class="text-light text-center mb-4">Create Account</h2>
+
+            @if (!string.IsNullOrEmpty(error))
+            {
+                <div class="alert alert-danger">@error</div>
+            }
+
+            <div class="card general-block">
+                <div class="card-body p-4">
+                    <form asp-action="SignUp" method="post">
+
+                        <div class="mb-3">
+                            <label class="form-label text-light">Username</label>
+                            <input name="username" type="text" class="form-control" required autofocus />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label text-light">Password</label>
+                            <input name="password" type="password" class="form-control" required />
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label text-light">Confirm Password</label>
+                            <input name="confirmPassword" type="password" class="form-control" required />
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Create Account</button>
+                    </form>
+                </div>
+            </div>
+
+            <p class="text-center text-muted mt-3">
+                Already have an account?
+                <a asp-action="Login">Sign in</a>
+            </p>
+
+        </div>
+    </div>
+</div>

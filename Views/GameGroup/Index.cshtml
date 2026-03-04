@@ -30,6 +30,10 @@
 
                     <div>
                         <button id="clearFilter" class="btn btn-sm btn-secondary">Clear filter</button>
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <a asp-action="Create" class="btn btn-sm btn-primary">+ New Group</a>
+                        }
                     </div>
                 </div>
             </div>
@@ -57,16 +61,8 @@
         function initMasonry() {
             const grid = document.querySelector(".masonry-grid");
             if (!grid) return;
-
-            if (grid._masonryInstance) {
-                grid._masonryInstance.destroy();
-            }
-
-            const msnry = new Masonry(grid, {
-                itemSelector: ".col",
-                percentPosition: true
-            });
-
+            if (grid._masonryInstance) grid._masonryInstance.destroy();
+            const msnry = new Masonry(grid, { itemSelector: ".col", percentPosition: true });
             grid._masonryInstance = msnry;
         }
 
@@ -77,13 +73,11 @@
             if (q) params.append("q", q);
             if (gameId) params.append("gameId", gameId);
 
-            const url = "/Home/FindGroupPartial?" + params.toString();
+            const url = "/GameGroup/IndexPartial?" + params.toString();
             try {
                 const res = await fetch(url, { headers: { "X-Requested-With": "XMLHttpRequest" } });
                 if (!res.ok) throw new Error("network");
-                const html = await res.text();
-                document.getElementById("contentArea").innerHTML = html;
-
+                document.getElementById("contentArea").innerHTML = await res.text();
                 initMasonry();
             } catch (e) {
                 console.error("fetchFiltered error", e);
@@ -100,8 +94,6 @@
             fetchFiltered();
         });
 
-        document.addEventListener("DOMContentLoaded", function () {
-            initMasonry();
-        });
+        document.addEventListener("DOMContentLoaded", initMasonry);
     </script>
 }
