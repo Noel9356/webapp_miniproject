@@ -2,7 +2,126 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<link rel="stylesheet" href="~/css/home.css" />
+
+<!-- GAME SLIDER -->
+<div class="game-section">
+
+    <div class="game-header">
+        <h2>Games</h2>
+    </div>
+
+    <div class="game-slider" id="game-slider"></div>
+
 </div>
+
+<!-- GAME GROUP SECTIONS -->
+<div id="game-groups"></div>
+
+<script>
+    // โหลดเกมทั้งหมด
+    fetch("/Game/GetGames")
+        .then(res => res.json())
+        .then(games => {
+
+            const slider = document.getElementById("game-slider");
+            const groups = document.getElementById("game-groups");
+
+            games.forEach((game, index) => {
+
+                // slider แสดงทุกเกม
+                const card = createGameCard(game.id, game.name, game.image);
+                slider.appendChild(card);
+
+                const section = createGameSection(game.id, game.name);
+                groups.appendChild(section);
+                
+            });
+
+        });
+
+    // สร้าง card ของเกม
+    function createGameCard(id, name, image) {
+
+        const card = document.createElement("div");
+        card.className = "game-card";
+
+        card.onclick = () => {
+            window.location.href = "/GameGroup/Index?gameId=" + id;
+        };
+
+        const img = document.createElement("img");
+        img.src = image;
+
+        const title = document.createElement("p");
+        title.textContent = name;
+
+        card.appendChild(img);
+        card.appendChild(title);
+
+        return card;
+    }
+
+    // สร้าง Section ของแต่ละเกม
+    function createGameSection(gameId, gameName) {
+
+        const section = document.createElement("div");
+        section.className = "group-section";
+
+        const header = document.createElement("div");
+        header.className = "group-header";
+
+        const title = document.createElement("h3");
+        title.textContent = gameName;
+
+        const viewAll = document.createElement("a");
+        viewAll.textContent = "ดูทั้งหมด";
+        viewAll.href = "/GameGroup/Index?gameId=" + gameId;
+
+        header.appendChild(title);
+        header.appendChild(viewAll);
+
+
+        const slider = document.createElement("div");
+        slider.className = "group-slider";
+
+
+        section.appendChild(header);
+        section.appendChild(slider);
+
+
+        loadGameGroups(gameId, slider);
+
+        return section;
+    }
+
+    // โหลด profile ของเกมนั้น
+    function loadGameGroups(gameId, container) {
+
+        fetch("/GameGroup/GetByGame?gameId=" + gameId)
+            .then(res => res.json())
+            .then(groups => {
+
+                groups.forEach(g => {
+
+                    const card = document.createElement("div");
+                    card.className = "profile-card";
+
+                    const img = document.createElement("img");
+                    img.src = g.imageUrl;
+
+                    const name = document.createElement("p");
+                    name.textContent = g.title;
+
+                    card.appendChild(img);
+                    card.appendChild(name);
+
+                    container.appendChild(card);
+
+                });
+
+            });
+
+    }
+
+</script>
