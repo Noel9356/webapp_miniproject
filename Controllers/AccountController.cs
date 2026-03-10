@@ -106,6 +106,13 @@ public class AccountController : Controller
 
     // -- Logout ----------------------------------------------------------------
 
+    [Authorize]
+    [HttpGet]
+    public IActionResult Profile()
+    {
+        return View();
+    }
+
     [HttpPost]
     public async Task<IActionResult> Logout()
     {
@@ -147,6 +154,7 @@ public class AccountController : Controller
         var claims = new List<Claim>
         {
             new(ClaimTypes.NameIdentifier, userId),
+            new(ClaimTypes.Name, email),
             new(ClaimTypes.Email, email),
         };
         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

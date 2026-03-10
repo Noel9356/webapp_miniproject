@@ -1,0 +1,24 @@
+@{
+    ViewData["Title"] = "Profile";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="card general-block rgb-frame">
+                <div class="card-body p-4 p-md-5">
+                    <p class="text-muted mb-2">Account</p>
+                    <h2 class="text-light mb-1">@(User.Identity?.Name ?? "Player")</h2>
+                    <p class="text-muted mb-4">Manage your account actions from one place.</p>
+
+                    <div class="d-grid gap-2">
+                        <form asp-controller="Account" asp-action="Logout" method="post">
+                            <button type="submit" class="btn btn-secondary w-100">Log out</button>
+                        </form>
+                        <a asp-controller="Account" asp-action="DeleteAccount" class="btn btn-danger w-100">Delete account</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -18,7 +18,7 @@
 
                         <div class="mb-3">
                             <label class="form-label text-light">Game</label>
-                            <select name="GameId" class="form-select" required>
+                            <select name="GameId" class="form-select" id="gameId" required>
                                 <option value="">— select a game —</option>
                                 @foreach (var game in games)
                                 {
@@ -42,6 +42,30 @@
                             <input name="ImageUrl" type="url" class="form-control" placeholder="https://..." />
                         </div>
 
+                        <div class="mb-3">
+                            <label class="form-label text-light">Mode</label>
+                            <select id="queueType" name="QueueType" class="form-select" required>
+                                <option value="Casual" selected>Casual</option>
+                                <option value="Competitive">Competitive</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4" id="rankField" style="display: none;">
+                            <label class="form-label text-light">Rank</label>
+                            <select name="RankTier" class="form-select" id="rankTier">
+                                <option value="">Select your rank</option>
+                                <option value="Iron">Iron</option>
+                                <option value="Bronze">Bronze</option>
+                                <option value="Silver">Silver</option>
+                                <option value="Gold">Gold</option>
+                                <option value="Platinum">Platinum</option>
+                                <option value="Diamond">Diamond</option>
+                                <option value="Ascendant">Ascendant</option>
+                                <option value="Immortal">Immortal</option>
+                                <option value="Radiant">Radiant</option>
+                            </select>
+                        </div>
+
                         <button type="submit" class="btn btn-primary w-100">Create Group</button>
                     </form>
                 </div>
@@ -50,3 +74,80 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        const queueType = document.getElementById("queueType");
+        const rankField = document.getElementById("rankField");
+        const rankTier = document.getElementById("rankTier");
+        const gameId = document.getElementById("gameId");
+
+        const rankSets = {
+            valorant:  ["Iron", "Bronze", "Silver", "Gold", "Platinum", "Diamond", "Ascendant", "Immortal", "Radiant"],
+            rov:       ["Brave", "Warrior", "Archduke", "Duc", "Baron", "Elite", "Conqueror", "Overlord"],
+            mlbb:      ["Warrior", "Elite", "Master", "Grandmaster", "Epic", "Legend", "Mythic", "Mythical Glory"],
+            dota:      ["Herald", "Guardian", "Crusader", "Archon", "Legend", "Ancient", "Divine", "Immortal"],
+            pubg:      ["Bronze", "Silver", "Gold", "Platinum", "Diamond", "Crown", "Ace", "Conqueror"],
+            lol:       ["Iron", "Bronze", "Silver", "Gold", "Platinum", "Emerald", "Diamond", "Master", "Grandmaster", "Challenger"],
+            apex:      ["Bronze", "Silver", "Gold", "Platinum", "Diamond", "Master", "Predator"],
+            cs2:       ["Silver", "Gold Nova", "Master Guardian", "Legendary Eagle", "Supreme", "Global Elite"],
+            overwatch: ["Bronze", "Silver", "Gold", "Platinum", "Diamond", "Master", "Grandmaster", "Top 500"],
+            fortnite:  ["Bronze", "Silver", "Gold", "Platinum", "Diamond", "Elite", "Champion", "Unreal"],
+            eafc:      ["Division 10", "Division 9", "Division 8", "Division 7", "Division 6", "Division 5", "Division 4", "Division 3", "Division 2", "Division 1", "Elite"],
+            marvel:    ["Bronze", "Silver", "Gold", "Platinum", "Diamond", "Grandmaster", "Celestial", "Eternity", "One Above All"],
+        };
+
+        function getRankSetByGameName(name) {
+            const n = (name || "").toLowerCase();
+            if (n.includes("valorant")) return rankSets.valorant;
+            if (n.includes("rov")) return rankSets.rov;
+            if (n.includes("dota")) return rankSets.dota;
+            if (n.includes("pubg")) return rankSets.pubg;
+            if (n.includes("league") || n.includes("lol")) return rankSets.lol;
+            if (n.includes("mobile legends") || n.includes("mlbb")) return rankSets.mlbb;
+            if (n.includes("apex")) return rankSets.apex;
+            if (n.includes("counter-strike") || n.includes("cs2") || n.includes("cs ")) return rankSets.cs2;
+            if (n.includes("overwatch")) return rankSets.overwatch;
+            if (n.includes("fortnite")) return rankSets.fortnite;
+            if (n.includes("fc ") || n.includes("ea fc") || n.includes("fifa")) return rankSets.eafc;
+            if (n.includes("marvel")) return rankSets.marvel;
+            return null;
+        }
+
+        function renderRankOptions(selectedValue = "") {
+            const gameName = gameId.options[gameId.selectedIndex]?.text || "";
+            const ranks = getRankSetByGameName(gameName);
+
+            rankTier.innerHTML = "";
+            const placeholder = document.createElement("option");
+            placeholder.value = "";
+            placeholder.textContent = "Select your rank";
+            rankTier.appendChild(placeholder);
+
+            ranks.forEach(rank => {
+                const opt = document.createElement("option");
+                opt.value = rank;
+                opt.textContent = rank;
+                if (rank === selectedValue) {
+                    opt.selected = true;
+                }
+                rankTier.appendChild(opt);
+            });
+        }
+
+        function toggleRankField() {
+            const isCompetitive = queueType.value === "Competitive";
+            const gameName = gameId.options[gameId.selectedIndex]?.text || "";
+            const hasRanks = getRankSetByGameName(gameName) !== null;
+            const show = isCompetitive && hasRanks;
+            rankField.style.display = show ? "block" : "none";
+            rankTier.required = show;
+            if (!show) rankTier.value = "";
+        }
+
+        gameId.addEventListener("change", () => { renderRankOptions(); toggleRankField(); });
+        queueType.addEventListener("change", toggleRankField);
+        renderRankOptions();
+        toggleRankField();
+    </script>
+}

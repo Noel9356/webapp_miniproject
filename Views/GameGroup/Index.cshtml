@@ -4,17 +4,27 @@
     ViewData["Title"] = "Find Group";
 }
 
-<div class="container py-3">
-    <div class="row">
-        <!-- Filter -->
-        <aside id="sidebar" class="col-12 col-md-3 mb-3">
-            <div class="card general-block">
+<div class="container py-4 gamepage-wrap">
+    <section class="page-hero mb-4">
+        <div>
+            <h1 class="mb-1">Find Your Squad</h1>
+            <p class="mb-0 text-muted">Browse game communities and jump into a group fast.</p>
+        </div>
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <a asp-action="Create" class="btn btn-primary">+ New Group</a>
+        }
+    </section>
+
+    <div class="row g-3">
+        <aside id="sidebar" class="col-12 col-xl-3">
+            <div class="card general-block rgb-frame sticky-xl-top filter-card">
                 <div class="card-body">
                     <h5 class="card-title text-light">Filters</h5>
 
                     <div class="mb-3">
                         <label class="form-label text-light">Search</label>
-                        <input id="filterSearch" type="search" class="form-control" placeholder="title or description">
+                        <input id="filterSearch" type="search" class="form-control" placeholder="title or description" />
                     </div>
 
                     <div class="mb-3">
@@ -28,23 +38,62 @@
                         </select>
                     </div>
 
-                    <div>
-                        <button id="clearFilter" class="btn btn-sm btn-secondary">Clear filter</button>
-                        @if (User.Identity?.IsAuthenticated == true)
-                        {
-                            <a asp-action="Create" class="btn btn-sm btn-primary">+ New Group</a>
-                        }
+                    <div class="mb-3">
+                        <label class="form-label text-light">Mode</label>
+                        <select id="filterQueueType" class="form-select">
+                            <option value="">All modes</option>
+                            <option value="Casual">Casual</option>
+                            <option value="Competitive">Competitive</option>
+                        </select>
                     </div>
+
+                    <div class="mb-3" id="filterRankWrap" style="display: none;">
+                        <label class="form-label text-light">Rank</label>
+                        <select id="filterRank" class="form-select">
+                            <option value="">All ranks</option>
+                            <option value="Iron">Iron</option>
+                            <option value="Bronze">Bronze</option>
+                            <option value="Silver">Silver</option>
+                            <option value="Gold">Gold</option>
+                            <option value="Platinum">Platinum</option>
+                            <option value="Diamond">Diamond</option>
+                            <option value="Ascendant">Ascendant</option>
+                            <option value="Immortal">Immortal</option>
+                            <option value="Radiant">Radiant</option>
+                        </select>
+                    </div>
+
+                    <button id="clearFilter" class="btn btn-secondary w-100">Clear filter</button>
                 </div>
             </div>
         </aside>
 
-        <!-- Content -->
-        <main class="col-12 col-md-9">
+        <section class="col-12 col-xl-9">
+            <div class="games-rail-wrap mb-4">
+                <h2 class="section-title">Games</h2>
+                <div class="games-rail" id="gamesRail">
+                    @foreach (var game in Model)
+                    {
+                        var preview = game.GameGroupInfos.FirstOrDefault()?.ImageUrl;
+                        <button type="button" class="game-chip rgb-frame" data-game-id="@game.Id" title="@game.Name">
+                            @if (!string.IsNullOrWhiteSpace(preview))
+                            {
+                                <img src="@preview" alt="@game.Name" loading="lazy" />
+                            }
+                            else
+                            {
+                                <div class="game-chip-fallback">@game.Name.Substring(0, 1)</div>
+                            }
+                            <span>@game.Name</span>
+                        </button>
+                    }
+                </div>
+            </div>
+
             <div id="contentArea">
                 @await Html.PartialAsync("_GameGroups", Model)
             </div>
-        </main>
+        </section>
     </div>
 </div>
 
@@ -58,27 +107,22 @@
             };
         }
 
-        function initMasonry() {
-            const grid = document.querySelector(".masonry-grid");
-            if (!grid) return;
-            if (grid._masonryInstance) grid._masonryInstance.destroy();
-            const msnry = new Masonry(grid, { itemSelector: ".col", percentPosition: true });
-            grid._masonryInstance = msnry;
-        }
-
         async function fetchFiltered() {
             const q = document.getElementById("filterSearch").value.trim();
             const gameId = document.getElementById("filterGame").value;
+            const queueType = document.getElementById("filterQueueType").value;
+            const rank = document.getElementById("filterRank").value;
             const params = new URLSearchParams();
             if (q) params.append("q", q);
             if (gameId) params.append("gameId", gameId);
+            if (queueType) params.append("queueType", queueType);
+            if (rank) params.append("rank", rank);
 
             const url = "/GameGroup/IndexPartial?" + params.toString();
             try {
                 const res = await fetch(url, { headers: { "X-Requested-With": "XMLHttpRequest" } });
                 if (!res.ok) throw new Error("network");
                 document.getElementById("contentArea").innerHTML = await res.text();
-                initMasonry();
             } catch (e) {
                 console.error("fetchFiltered error", e);
             }
@@ -86,14 +130,115 @@
 
         const debouncedFetch = debounce(fetchFiltered, 300);
 
+        const rankSets = {
+            valorant:  ["Iron", "Bronze", "Silver", "Gold", "Platinum", "Diamond", "Ascendant", "Immortal", "Radiant"],
+            rov:       ["Brave", "Warrior", "Archduke", "Duc", "Baron", "Elite", "Conqueror", "Overlord"],
+            mlbb:      ["Warrior", "Elite", "Master", "Grandmaster", "Epic", "Legend", "Mythic", "Mythical Glory"],
+            dota:      ["Herald", "Guardian", "Crusader", "Archon", "Legend", "Ancient", "Divine", "Immortal"],
+            pubg:      ["Bronze", "Silver", "Gold", "Platinum", "Diamond", "Crown", "Ace", "Conqueror"],
+            lol:       ["Iron", "Bronze", "Silver", "Gold", "Platinum", "Emerald", "Diamond", "Master", "Grandmaster", "Challenger"],
+            apex:      ["Bronze", "Silver", "Gold", "Platinum", "Diamond", "Master", "Predator"],
+            cs2:       ["Silver", "Gold Nova", "Master Guardian", "Legendary Eagle", "Supreme", "Global Elite"],
+            overwatch: ["Bronze", "Silver", "Gold", "Platinum", "Diamond", "Master", "Grandmaster", "Top 500"],
+            fortnite:  ["Bronze", "Silver", "Gold", "Platinum", "Diamond", "Elite", "Champion", "Unreal"],
+            eafc:      ["Division 10", "Division 9", "Division 8", "Division 7", "Division 6", "Division 5", "Division 4", "Division 3", "Division 2", "Division 1", "Elite"],
+            marvel:    ["Bronze", "Silver", "Gold", "Platinum", "Diamond", "Grandmaster", "Celestial", "Eternity", "One Above All"],
+        };
+
+        function getRankSetByGameName(name) {
+            const n = (name || "").toLowerCase();
+            if (n.includes("valorant")) return rankSets.valorant;
+            if (n.includes("rov")) return rankSets.rov;
+            if (n.includes("dota")) return rankSets.dota;
+            if (n.includes("pubg")) return rankSets.pubg;
+            if (n.includes("league") || n.includes("lol")) return rankSets.lol;
+            if (n.includes("mobile legends") || n.includes("mlbb")) return rankSets.mlbb;
+            if (n.includes("apex")) return rankSets.apex;
+            if (n.includes("counter-strike") || n.includes("cs2") || n.includes("cs ")) return rankSets.cs2;
+            if (n.includes("overwatch")) return rankSets.overwatch;
+            if (n.includes("fortnite")) return rankSets.fortnite;
+            if (n.includes("fc ") || n.includes("ea fc") || n.includes("fifa")) return rankSets.eafc;
+            if (n.includes("marvel")) return rankSets.marvel;
+            return null;
+        }
+
+        function renderFilterRankOptions() {
+            const gameSelect = document.getElementById("filterGame");
+            const rank = document.getElementById("filterRank");
+            const gameName = gameSelect.options[gameSelect.selectedIndex]?.text || "";
+            const ranks = getRankSetByGameName(gameName);
+
+            rank.innerHTML = "";
+            const all = document.createElement("option");
+            all.value = "";
+            all.textContent = "All ranks";
+            rank.appendChild(all);
+
+            if (ranks) {
+                ranks.forEach(value => {
+                    const opt = document.createElement("option");
+                    opt.value = value;
+                    opt.textContent = value;
+                    rank.appendChild(opt);
+                });
+            }
+        }
+
+        function toggleRankFilter() {
+            const queueType = document.getElementById("filterQueueType").value;
+            const rankWrap = document.getElementById("filterRankWrap");
+            const rank = document.getElementById("filterRank");
+            const gameSelect = document.getElementById("filterGame");
+            const gameName = gameSelect.options[gameSelect.selectedIndex]?.text || "";
+            const hasRanks = getRankSetByGameName(gameName) !== null;
+            const isCompetitive = queueType === "Competitive";
+            const show = isCompetitive && hasRanks;
+            rankWrap.style.display = show ? "block" : "none";
+            if (!show) rank.value = "";
+        }
+
         document.getElementById("filterSearch").addEventListener("input", debouncedFetch);
-        document.getElementById("filterGame").addEventListener("change", debouncedFetch);
+        document.getElementById("filterGame").addEventListener("change", function () {
+            renderFilterRankOptions();
+            toggleRankFilter();
+            debouncedFetch();
+        });
+        document.getElementById("filterQueueType").addEventListener("change", function () {
+            toggleRankFilter();
+            fetchFiltered();
+        });
+        document.getElementById("filterRank").addEventListener("change", fetchFiltered);
         document.getElementById("clearFilter").addEventListener("click", function () {
             document.getElementById("filterSearch").value = "";
             document.getElementById("filterGame").value = "";
+            document.getElementById("filterQueueType").value = "";
+            document.getElementById("filterRank").value = "";
+            renderFilterRankOptions();
+            toggleRankFilter();
             fetchFiltered();
         });
 
-        document.addEventListener("DOMContentLoaded", initMasonry);
+        document.getElementById("gamesRail").addEventListener("click", function (event) {
+            const chip = event.target.closest(".game-chip");
+            if (!chip) return;
+            const gameId = chip.dataset.gameId || "";
+            document.getElementById("filterGame").value = gameId;
+            renderFilterRankOptions();
+            fetchFiltered();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+
+        document.getElementById("contentArea").addEventListener("click", function (event) {
+            const seeAll = event.target.closest("[data-see-all-game]");
+            if (!seeAll) return;
+            const gameId = seeAll.dataset.seeAllGame || "";
+            document.getElementById("filterGame").value = gameId;
+            renderFilterRankOptions();
+            fetchFiltered();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+
+        renderFilterRankOptions();
+        toggleRankFilter();
     </script>
 }

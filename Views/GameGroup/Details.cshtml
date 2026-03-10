@@ -5,9 +5,9 @@
     var isOwner = (bool)(ViewBag.IsOwner ?? false);
 }
 
-<div class="container-fluid py-3">
+<div class="container py-3">
     <div class="row justify-content-center">
-        <div class="col-10 col-md-4 mb-3">
+        <div class="col-12 col-md-6 col-lg-5 mb-3">
             <div class="card rounded-3 general-block">
                 @if (!string.IsNullOrEmpty(Model.ImageUrl))
                 {
@@ -19,6 +19,13 @@
                         <div class="mb-1 small text-muted">@Model.Game.Name</div>
                     }
                     <h1 class="h3 mt-2 mb-3 text-light">@Model.Title</h1>
+                    <div class="group-meta-row mb-3">
+                        <span class="queue-badge @(Model.QueueType == "Competitive" ? "badge-competitive" : "badge-casual")">@Model.QueueType</span>
+                        @if (!string.IsNullOrWhiteSpace(Model.RankTier))
+                        {
+                            <span class="rank-badge">@Model.RankTier</span>
+                        }
+                    </div>
                     <p class="text-light">@Model.Description</p>
 
                     <div class="small text-muted mb-3">
@@ -27,44 +34,39 @@
 
                     @if (User.Identity?.IsAuthenticated == true && isOwner)
                     {
-                        <div class="container-fluid p-0 mt-auto pt-3 border-top border-secondary">
-                            <div class="row row-cols-auto gx-2">
-                                <div class="col">
-                                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-sm btn-outline-light">Edit</a>
-                                </div>
-                                <div class="col">
-                                    <form asp-action="Delete" asp-route-id="@Model.Id" method="post"
-                                        onsubmit="return confirm('Delete this group?');">
-                                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete Group</button>
-                                    </form>
-                                </div>
-                            </div>
+                        <div class="d-flex gap-2 mt-auto pt-3 border-top border-secondary flex-wrap">
+                            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-sm btn-outline-light">Edit</a>
+                            <form asp-action="Delete" asp-route-id="@Model.Id" method="post"
+                                onsubmit="return confirm('Delete this group?');" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete Group</button>
+                            </form>
                         </div>
                     }
                 </div>
             </div>
         </div>
 
-        <div class="col d-flex flex-column">
+        <div class="col-12 col-md-6 col-lg-5 d-flex flex-column">
             <div class="mb-3">
                 <div class="card rounded-3 general-block">
-                    <div class="w-full flex flex-row border-bottom p-2">
-                        <button class="flex flex-col items-center btn">
-                            <h4 class="text-light">Skills</h4>
-                        </button>
-                        <button class="flex flex-col items-center btn">
-                            <h4 class="text-light">Moment</h4>
-                        </button>
+                    <div class="card-header border-bottom border-secondary p-0">
+                        <div class="btn-group w-100" role="group">
+                            <button type="button" class="btn btn-sm text-light flex-grow-1 border-0">
+                                <h6 class="text-light mb-0">Details</h6>
+                            </button>
+                            <button type="button" class="btn btn-sm text-light flex-grow-1 border-0">
+                                <h6 class="text-light mb-0">Reviews</h6>
+                            </button>
+                        </div>
                     </div>
-
-                    <div class="card-body d-flex flex-column p-4">
-                        <p>Test</p>
+                    <div class="card-body d-flex flex-column p-3">
+                        <p class="text-light">@Model.Description</p>
                     </div>
                 </div>
             </div>
-            <div>
-                <div class="card rounded-3 p-4 general-block">
-                    <h4 class="text-light">User Review</h4>
+            <div class="h-100">
+                <div class="card rounded-3 p-4 general-block h-100">
+                    <h4 class="text-light">Reviews</h4>
                 </div>
             </div>
         </div>

@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Supabase.Postgrest.Attributes;
 using Supabase.Postgrest.Models;
 
@@ -11,6 +12,7 @@ public class GameInfo : BaseModel
 
     [Column("name")]
     public string Name { get; set; } = "";
-    
+
+    [JsonIgnore]
     public List<GameGroupInfo> GameGroupInfos { get; set; } = new();
 }

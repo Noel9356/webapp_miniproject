@@ -5,22 +5,25 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - webapp_miniproject</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/webapp_miniproject.styles.css" asp-append-version="true" />
 </head>
 
-<body>
+<body class="app-shell">
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark border-bottom mb-3 fixed-top", id="mainNav">
+        <nav class="navbar navbar-expand-lg navbar-dark border-bottom fixed-top rgb-line-nav" id="mainNav">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Project</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index">GameHub</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex">
-                    <ul class="navbar-nav flex-grow-1">
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav flex-grow-1 ms-auto">
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
@@ -34,26 +37,27 @@
                 </div>
                 @if (User.Identity?.IsAuthenticated == true)
                 {
-                    <span class="navbar-text text-light me-2">@User.Identity.Name</span>
-                    <a asp-controller="Account" asp-action="DeleteAccount" class="btn btn-sm btn-danger me-2">Delete Account</a>
-                    <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
-                        <button type="submit" class="btn btn-sm btn-secondary">Sign out</button>
-                    </form>
+                    <div class="d-flex align-items-center gap-2 flex-wrap justify-content-end ms-2">
+                        <a asp-controller="Account" asp-action="Profile" class="btn btn-sm btn-secondary profile-nav-btn">
+                            <span class="profile-dot"></span>
+                            @(User.Identity?.Name ?? "Profile")
+                        </a>
+                    </div>
                 }
                 else
                 {
-                    <a asp-controller="Account" asp-action="Login" class="btn btn-sm btn-light me-2">Sign in</a>
-                    <a asp-controller="Account" asp-action="SignUp" class="btn btn-sm btn-primary">Sign up</a>
+                    <div class="d-flex gap-2 ms-2 flex-wrap justify-content-end">
+                        <a asp-controller="Account" asp-action="Login" class="btn btn-sm btn-light">Sign in</a>
+                        <a asp-controller="Account" asp-action="SignUp" class="btn btn-sm btn-primary">Sign up</a>
+                    </div>
                 }
             </div>
         </nav>
     </header>
 
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+    <main role="main" class="py-3">
+        @RenderBody()
+    </main>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

@@ -2,7 +2,41 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container py-4 py-md-5 home-visual-wrap">
+    <section class="hero-picture rgb-frame mb-4">
+        <div class="hero-overlay">
+            <p class="hero-kicker">GameHub Community</p>
+            <h1>Find Your People.<br />Play Better Together.</h1>
+            <p class="hero-subtitle">From chill matches to full competitive grind, find players that match your style and your rank.</p>
+
+            <div class="d-flex flex-wrap gap-2">
+                <a asp-controller="GameGroup" asp-action="Index" class="btn btn-primary btn-lg">Explore Groups</a>
+                @if (User.Identity?.IsAuthenticated == false)
+                {
+                    <a asp-controller="Account" asp-action="SignUp" class="btn btn-secondary btn-lg">Create Account</a>
+                }
+            </div>
+        </div>
+    </section>
+
+    <section class="picture-grid">
+        <article class="picture-card rgb-frame pic-1">
+            <div class="picture-content">
+                <h3>Rank Push Parties</h3>
+                <p>Queue with players around your level and climb together.</p>
+            </div>
+        </article>
+        <article class="picture-card rgb-frame pic-2">
+            <div class="picture-content">
+                <h3>Casual Hangouts</h3>
+                <p>Relaxed groups for fun games after class or work.</p>
+            </div>
+        </article>
+        <article class="picture-card rgb-frame pic-3">
+            <div class="picture-content">
+                <h3>Scrim Ready</h3>
+                <p>Form a team for scrims, customs, and local events.</p>
+            </div>
+        </article>
+    </section>
 </div>

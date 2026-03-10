@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\USER\\Desktop\\webapp_miniproject\\webapp_miniproject.csproj": {}
+    "C:\\Documents\\GitHub\\webapp_miniproject\\webapp_miniproject.csproj": {}
   },
   "projects": {
-    "C:\\Users\\USER\\Desktop\\webapp_miniproject\\webapp_miniproject.csproj": {
+    "C:\\Documents\\GitHub\\webapp_miniproject\\webapp_miniproject.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\USER\\Desktop\\webapp_miniproject\\webapp_miniproject.csproj",
+        "projectUniqueName": "C:\\Documents\\GitHub\\webapp_miniproject\\webapp_miniproject.csproj",
         "projectName": "webapp_miniproject",
-        "projectPath": "C:\\Users\\USER\\Desktop\\webapp_miniproject\\webapp_miniproject.csproj",
-        "packagesPath": "C:\\Users\\USER\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\USER\\Desktop\\webapp_miniproject\\obj\\",
+        "projectPath": "C:\\Documents\\GitHub\\webapp_miniproject\\webapp_miniproject.csproj",
+        "packagesPath": "C:\\Users\\chawa\\.nuget\\packages\\",
+        "outputPath": "C:\\Documents\\GitHub\\webapp_miniproject\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\USER\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\chawa\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
