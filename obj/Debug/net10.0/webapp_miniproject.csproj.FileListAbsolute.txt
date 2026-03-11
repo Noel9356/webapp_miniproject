@@ -1,0 +1,10 @@
+C:\Documents\GitHub\webapp_miniproject\obj\Debug\net10.0\webapp_miniproject.csproj.AssemblyReference.cache
+C:\Documents\GitHub\webapp_miniproject\obj\Debug\net10.0\rpswa.dswa.cache.json
+C:\Documents\GitHub\webapp_miniproject\obj\Debug\net10.0\webapp_miniproject.GeneratedMSBuildEditorConfig.editorconfig
+C:\Documents\GitHub\webapp_miniproject\obj\Debug\net10.0\webapp_miniproject.AssemblyInfoInputs.cache
+C:\Documents\GitHub\webapp_miniproject\obj\Debug\net10.0\webapp_miniproject.AssemblyInfo.cs
+C:\Documents\GitHub\webapp_miniproject\obj\Debug\net10.0\webapp_miniproject.csproj.CoreCompileInputs.cache
+C:\Documents\GitHub\webapp_miniproject\obj\Debug\net10.0\webapp_miniproject.MvcApplicationPartsAssemblyInfo.cache
+C:\Documents\GitHub\webapp_miniproject\obj\Debug\net10.0\webapp_miniproject.RazorAssemblyInfo.cache
+C:\Documents\GitHub\webapp_miniproject\obj\Debug\net10.0\webapp_miniproject.RazorAssemblyInfo.cs
+C:\Documents\GitHub\webapp_miniproject\obj\Debug\net10.0\webapp_miniproject.sourcelink.json
