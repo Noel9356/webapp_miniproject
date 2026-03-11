@@ -1,65 +1,131 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - webapp_miniproject</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+    href="https://fonts.googleapis.com/css2?family=Belanosima:wght@400;600;700&family=Google+Sans+Code:ital,wght@0,300..800;1,300..800&family=Lexend+Giga:wght@100..900&family=Mona+Sans:ital,wght@0,200..900;1,200..900&family=Noto+Sans+Thai+Looped:wght@100..900&family=Prompt:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+    rel="stylesheet">
+
+    <!-- CSS -->
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/webapp_miniproject.styles.css" asp-append-version="true" />
 </head>
 
 <body>
+
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark border-bottom mb-3 fixed-top", id="mainNav">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Project</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+        <nav id="nav_bar">
+
+            <div class="container-fluid d-flex justify-content-between align-items-center">
+
+                <!-- Logo -->
+                <a asp-controller="Home" asp-action="Index">
+                    <img src="https://www.reg.kmitl.ac.th/student_event/assets/img/logo_th.png">
+                </a>
+
+                <!-- Menu -->
+                <ul id="right_nav">
+
+                    <li>
+                        <a asp-controller="Home" asp-action="Index" class="nav-btn">
+                            Home
+                        </a>
+                    </li>
+
+                    <li>
+                        <a asp-controller="GameGroup" asp-action="Create" class="nav-btn">
+                            Create
+                        </a>
+                    </li>
+
+                    <li>
+                        <a asp-controller="Home" asp-action="Help" class="nav-btn">
+                            Help
+                        </a>
+                    </li>
+
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <li class="user-name">
+                            @User.Identity.Name
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+
+                        <li>
+                            <a asp-controller="Account" asp-action="DeleteAccount" class="btn btn-danger btn-sm">
+                                Delete
+                            </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-controller="GameGroup" asp-action="Index">Find Group</a>
+
+                        <li>
+                            <form asp-controller="Account" asp-action="Logout" method="post">
+                                <button type="submit" class="btn btn-secondary btn-sm">
+                                    Sign out
+                                </button>
+                            </form>
                         </li>
-                    </ul>
-                </div>
-                @if (User.Identity?.IsAuthenticated == true)
-                {
-                    <span class="navbar-text text-light me-2">@User.Identity.Name</span>
-                    <a asp-controller="Account" asp-action="DeleteAccount" class="btn btn-sm btn-danger me-2">Delete Account</a>
-                    <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
-                        <button type="submit" class="btn btn-sm btn-secondary">Sign out</button>
-                    </form>
-                }
-                else
-                {
-                    <a asp-controller="Account" asp-action="Login" class="btn btn-sm btn-light me-2">Sign in</a>
-                    <a asp-controller="Account" asp-action="SignUp" class="btn btn-sm btn-primary">Sign up</a>
-                }
+                    }
+                    else
+                    {
+                        <li>
+                            <a asp-controller="Account" asp-action="Login" class="nav-btn">
+                                Login
+                            </a>
+                        </li>
+
+                        <li>
+                            <a asp-controller="Account" asp-action="SignUp" class="nav-btn primary">
+                                Sign up
+                            </a>
+                        </li>
+                    }
+
+                </ul>
+
             </div>
         </nav>
     </header>
 
+
     <div class="container">
-        <main role="main" class="pb-3">
+        <main role="main">
             @RenderBody()
         </main>
     </div>
+
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+
+
+
+    <footer class="footer">
+
+        <div class="footer-container">
+
+            <h3>🐰 เล่นเก(ม)ปะ</h3>
+
+            <p>หาเพื่อนเล่นเกม จัดทีม และสร้างคอมมูนิตี้เกมเมอร์</p>
+
+            <div class="footer-social">
+                <a href="#">📷</a>
+                <a href="#">🎵</a>
+                <a href="#">💬</a>
+            </div>
+
+            <p class="copyright">© 2026 เล่นเก(ม)ปะ</p>
+
+        </div>
+
+    </footer>
+
 </body>
 
 </html>

@@ -1,51 +1,187 @@
-html {
-    font-size: 14px;
-}
+/* ===== GLOBAL ===== */
 
-@media (min-width: 768px) {
-    html {
-        font-size: 16px;
-    }
-}
-
-.btn:focus,
-.btn:active:focus,
-.btn-link.nav-link:focus,
-.form-control:focus,
-.form-check-input:focus {
-    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-    position: relative;
-    min-height: 100%;
+* {
+  font-family: "Mona Sans", "Noto Sans Thai Looped", sans-serif;
 }
 
 body {
-    margin-bottom: 60px;
-    background-color: #1e2124;
+  background: #f7f7f7;
+  padding-top: 70px;
+  color: #111;
 }
 
-main h1 {
-    color: white;
+.container {
+  max-width: 1000px;
 }
 
-main p {
-    color: white;
+/* ===== NAVBAR ===== */
+
+#nav_bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+
+  height: 70px;
+  padding: 0 20px;
+
+  display: flex;
+  align-items: center;
+
+  background: #ffffff;
+  border-bottom: 1px solid #eee;
+
+  z-index: 1000;
 }
 
-header a {
-    color: white;
+#nav_bar img {
+  height: 40px;
 }
 
-header nav {
-    background-color: #7289da;
+/* ===== MENU ===== */
+
+#right_nav {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
 }
 
-hr {
-    color: white;
+#right_nav li {
+  display: flex;
+  align-items: center;
 }
 
-.general-block {
-    background-color: #36393e;
+/* ===== NAV BUTTON ===== */
+
+.nav-btn {
+  text-decoration: none;
+  color: #111;
+
+  font-size: 14px;
+  padding: 10px 14px;
+
+  border-radius: 6px;
+
+  transition: all 0.2s ease;
+}
+
+.nav-btn:hover {
+  background: #f3f3f3;
+}
+
+/* ===== PRIMARY BUTTON (Sign up) ===== */
+
+.nav-btn.primary {
+  background: #f57c00;
+  color: #fff;
+  border-radius: 100px;
+}
+
+.nav-btn.primary:hover {
+  background: #ffd5ad;
+  color: black;
+}
+
+/* ===== USER NAME ===== */
+
+.user-name {
+  font-size: 14px;
+  margin-right: 10px;
+}
+
+/* ===== OPTIONAL EFFECT ===== */
+
+#nav_bar {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.nav-btn {
+  text-decoration: none;
+  color: #111;
+  font-size: 14px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.nav-btn:hover {
+  background: #fff3e6;
+  color: #f57c00;
+}
+
+.footer{
+    background:#ffffff;
+    color:rgb(0, 0, 0);
+    text-align:center;
+    padding:40px 0 20px 0;
+}
+
+.footer h3{
+    color:#ff7a00;
+    margin-bottom:10px;
+}
+
+.footer-social{
+    margin:15px 0;
+}
+
+.footer-social a{
+    margin:0 10px;
+    font-size:20px;
+}
+
+.store-btn {
+  display: block;
+  background: #3a3363;
+  padding: 10px 20px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  text-decoration: none;
+  color: white;
+  width: 180px;
+}
+
+/* HELP PAGE */
+
+.help-header{
+  margin: 100px 0 100px 0;
+}
+
+.help-header h1{
+  font-weight:700;
+}
+
+.section-title{
+    font-weight:600;
+}
+
+.help-card{
+    border-radius:12px;
+    transition:0.2s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    background-color: #ffffff;
+}
+
+.help-card:hover{
+    transform:translateY(-5px);
+}
+
+.help-list li{
+    margin-bottom:8px;
+}
+
+.accordion-button{
+    background-color:#ffffff;
+    color:#000000;
+}
+
+.accordion-button:not(.collapsed){
+    background-color:#ffdcc0;
+    color:rgb(0, 0, 0);
+}
+
+.accordion-button:focus{
+    box-shadow:none;
 }
