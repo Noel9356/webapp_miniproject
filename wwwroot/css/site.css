@@ -185,3 +185,24 @@ body {
 .accordion-button:focus{
     box-shadow:none;
 }
+
+.profile{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.user-name{
+    font-weight:600;
+}
+
+.logout-link{
+    background:none;
+    border:none;
+    color:#666;
+    font-size:14px;
+}
+
+.logout-link:hover{
+    color:#000;
+}
