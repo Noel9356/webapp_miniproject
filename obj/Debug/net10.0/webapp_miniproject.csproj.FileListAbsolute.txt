@@ -233,6 +233,5 @@ C:\Documents\GitHub\webapp_miniproject\obj\Debug\net10.0\swae.build.ex.cache
 C:\Documents\GitHub\webapp_miniproject\obj\Debug\net10.0\webapp_m.C9A070EE.Up2Date
 C:\Documents\GitHub\webapp_miniproject\obj\Debug\net10.0\webapp_miniproject.genruntimeconfig.cache
 C:\Documents\GitHub\webapp_miniproject\obj\Debug\net10.0\ref\webapp_miniproject.dll
-C:\Documents\GitHub\webapp_miniproject\obj\Debug\net10.0\compressed\rrwdm8fm1t-{0}-59bohr17tk-59bohr17tk.gz
-C:\Documents\GitHub\webapp_miniproject\obj\Debug\net10.0\compressed\rrwdm8fm1t-{0}-22yauc3li1-22yauc3li1.gz
 C:\Documents\GitHub\webapp_miniproject\obj\Debug\net10.0\compressed\rrwdm8fm1t-{0}-9n4sqsc798-9n4sqsc798.gz
+C:\Documents\GitHub\webapp_miniproject\obj\Debug\net10.0\compressed\rrwdm8fm1t-{0}-y4jsr87ibd-y4jsr87ibd.gz

@@ -362,6 +362,8 @@ h6 {
     align-items: center;
     width: 100%;
     min-height: 72px;
+    padding-top: 0.35rem;
+    padding-bottom: 0.35rem;
 }
 
 .fixed-top {
@@ -383,6 +385,7 @@ h6 {
     display: inline-flex;
     align-items: center;
     color: var(--text-0);
+    line-height: 1.2;
 }
 
 .nav-actions {
@@ -1352,6 +1355,11 @@ a:hover {
         flex-wrap: nowrap;
     }
 
+    .navbar-expand-lg .container-fluid {
+        flex-wrap: nowrap;
+        align-items: center;
+    }
+
     .navbar-expand-lg .navbar-toggler {
         display: none;
     }
@@ -1360,6 +1368,8 @@ a:hover {
         display: flex !important;
         flex: 1 1 auto;
         flex-basis: auto;
+        width: auto;
+        margin-left: 0.75rem;
         align-items: center;
         justify-content: space-between;
     }
@@ -1367,6 +1377,7 @@ a:hover {
     .navbar-expand-lg .navbar-nav {
         flex-direction: row;
         align-items: center;
+        margin-right: auto;
     }
 
     .navbar-expand-lg .nav-actions {
@@ -1407,6 +1418,8 @@ a:hover {
 
     .navbar {
         min-height: 64px;
+        padding-top: 0.45rem;
+        padding-bottom: 0.45rem;
     }
 
     .navbar .container-fluid {
