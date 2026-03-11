@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\build\webapp_miniproject.props" />
-</Project>
