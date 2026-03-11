@@ -172,6 +172,10 @@ public class GameGroupController : Controller
         }
     }
 
+    // Case-insensitive status check
+    private static bool StatusIs(string status, string expected) =>
+        status.Equals(expected, StringComparison.OrdinalIgnoreCase);
+
     // -- Index ----------------------------------------------------------------
 
     [HttpGet]
@@ -179,13 +183,12 @@ public class GameGroupController : Controller
     {
         var gameInfos = await FetchGameInfosWithGroups();
         SortGameGroups(gameInfos, "newest");
-        // var gameCatalog = MergeExtraGames(gameInfos);
-        // return View(gameCatalog);
         return View(gameInfos);
     }
 
     [HttpGet]
-    public async Task<IActionResult> IndexPartial(string? q, int? gameId, string? queueType, string? rank, string? status, string? sort)
+    public async Task<IActionResult> IndexPartial(
+        string? q, int? gameId, string? queueType, string? rank, string? status, string? sort)
     {
         var gameInfos = await FetchGameInfosWithGroups();
 
@@ -193,30 +196,18 @@ public class GameGroupController : Controller
         {
             gameInfo.GameGroupInfos = gameInfo.GameGroupInfos
                 .Where(g =>
-                    (gameId == null || g.GameId == gameId) &&
-                    (
-                        string.IsNullOrWhiteSpace(queueType) ||
-                        g.QueueType.Equals(queueType, StringComparison.OrdinalIgnoreCase)
-                    ) &&
-                    (
-                        string.IsNullOrWhiteSpace(rank) ||
-                        (g.RankTier?.Contains(rank, StringComparison.OrdinalIgnoreCase) ?? false)
-                    ) &&
-                    (
-                        string.IsNullOrWhiteSpace(status) ||
-                        g.EffectiveStatus.Equals(status, StringComparison.OrdinalIgnoreCase)
-                    ) &&
-                    (
-                        string.IsNullOrWhiteSpace(q) ||
+                    (gameId    == null || g.GameId == gameId) &&
+                    (string.IsNullOrWhiteSpace(queueType) || StatusIs(g.QueueType, queueType)) &&
+                    (string.IsNullOrWhiteSpace(rank)      || (g.RankTier?.Contains(rank, StringComparison.OrdinalIgnoreCase) ?? false)) &&
+                    (string.IsNullOrWhiteSpace(status)    || StatusIs(g.EffectiveStatus, status)) &&
+                    (string.IsNullOrWhiteSpace(q)         ||
                         (g.Title?.Contains(q, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                        (g.Description?.Contains(q, StringComparison.OrdinalIgnoreCase) ?? false)
-                    )
+                        (g.Description?.Contains(q, StringComparison.OrdinalIgnoreCase) ?? false))
                 )
                 .ToList();
         }
 
-            SortGameGroups(gameInfos, sort);
-
+        SortGameGroups(gameInfos, sort);
         var filtered = gameInfos.Where(g => g.GameGroupInfos.Any()).ToList();
         return PartialView("_GameGroups", filtered);
     }
