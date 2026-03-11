@@ -9,6 +9,11 @@ namespace webapp_miniproject.Controllers;
 
 public class AccountController : Controller
 {
+    private const string ProfileDisplayNameClaim = "profile_display_name";
+    private const string ProfileBioClaim = "profile_bio";
+    private const string ProfileAvatarUrlClaim = "profile_avatar_url";
+    private const string ProfileFavoriteGameClaim = "profile_favorite_game";
+
     private readonly Supabase.Client _supabase;
 
     public AccountController(Supabase.Client supabase)
@@ -127,7 +132,8 @@ public class AccountController : Controller
 
         if (!profileLoaded)
         {
-            TempData["ProfileWarning"] = "Profile table is not ready yet. You can still view account actions below.";
+            ApplyProfileClaimsFallback(model);
+            TempData["ProfileWarning"] = "Cloud profile storage is unavailable right now. You can still edit and save your profile locally in this session.";
         }
 
         return View(model);
@@ -241,12 +247,14 @@ public class AccountController : Controller
             }
 
             TempData["ProfileSuccess"] = "Profile saved.";
+            await RefreshProfileClaimsAsync(user, model);
             return RedirectToAction(nameof(Profile));
         }
         catch
         {
-            ViewBag.Error = "Could not save profile. Ensure Supabase table 'UserProfile' exists with expected columns.";
-            return View(model);
+            await RefreshProfileClaimsAsync(user, model);
+            TempData["ProfileWarning"] = "Cloud profile storage is unavailable right now. Your changes were saved locally for this sign-in session.";
+            return RedirectToAction(nameof(Profile));
         }
     }
 
@@ -288,16 +296,78 @@ public class AccountController : Controller
 
     private async Task SignInCookie(string userId, string email)
     {
+        await SignInCookie(userId, email, null);
+    }
+
+    private async Task SignInCookie(string userId, string username, ProfileViewModel? profile)
+    {
         var claims = new List<Claim>
         {
             new(ClaimTypes.NameIdentifier, userId),
-            new(ClaimTypes.Name, email),
-            new(ClaimTypes.Email, email),
+            new(ClaimTypes.Name, username),
+            new(ClaimTypes.Email, username),
         };
+
+        if (profile is not null)
+        {
+            if (!string.IsNullOrWhiteSpace(profile.DisplayName))
+            {
+                claims.Add(new Claim(ProfileDisplayNameClaim, profile.DisplayName));
+            }
+
+            if (!string.IsNullOrWhiteSpace(profile.Bio))
+            {
+                claims.Add(new Claim(ProfileBioClaim, profile.Bio));
+            }
+
+            if (!string.IsNullOrWhiteSpace(profile.AvatarUrl))
+            {
+                claims.Add(new Claim(ProfileAvatarUrlClaim, profile.AvatarUrl));
+            }
+
+            if (!string.IsNullOrWhiteSpace(profile.FavoriteGame))
+            {
+                claims.Add(new Claim(ProfileFavoriteGameClaim, profile.FavoriteGame));
+            }
+        }
+
         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
         await HttpContext.SignInAsync(
             CookieAuthenticationDefaults.AuthenticationScheme,
             new ClaimsPrincipal(identity));
+    }
+
+    private void ApplyProfileClaimsFallback(ProfileViewModel model)
+    {
+        var displayName = User.FindFirstValue(ProfileDisplayNameClaim);
+        var bio = User.FindFirstValue(ProfileBioClaim);
+        var avatarUrl = User.FindFirstValue(ProfileAvatarUrlClaim);
+        var favoriteGame = User.FindFirstValue(ProfileFavoriteGameClaim);
+
+        if (!string.IsNullOrWhiteSpace(displayName))
+        {
+            model.DisplayName = displayName;
+        }
+
+        if (!string.IsNullOrWhiteSpace(bio))
+        {
+            model.Bio = bio;
+        }
+
+        if (!string.IsNullOrWhiteSpace(avatarUrl))
+        {
+            model.AvatarUrl = avatarUrl;
+        }
+
+        if (!string.IsNullOrWhiteSpace(favoriteGame))
+        {
+            model.FavoriteGame = favoriteGame;
+        }
+    }
+
+    private Task RefreshProfileClaimsAsync(UserInfo user, ProfileViewModel profile)
+    {
+        return SignInCookie(user.Id.ToString(), user.Username, profile);
     }
 
     private async Task<(ProfileViewModel? Model, bool ProfileLoaded)> BuildProfileViewModelAsync(int userId)
