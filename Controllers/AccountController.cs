@@ -133,7 +133,7 @@ public class AccountController : Controller
         if (!profileLoaded)
         {
             ApplyProfileClaimsFallback(model);
-            TempData["ProfileWarning"] = "Cloud profile storage is unavailable right now. You can still edit and save your profile locally in this session.";
+            TempData["ProfileWarning"] = "ลิงกินกล้วยอยู่บนหลังคานะ";
         }
 
         return View(model);
@@ -251,11 +251,11 @@ public class AccountController : Controller
             return RedirectToAction(nameof(Profile));
         }
         catch
-        // {
-        //     await RefreshProfileClaimsAsync(user, model);
-        //     TempData["ProfileWarning"] = "Cloud profile storage is unavailable right now. Your changes were saved locally for this sign-in session.";
-        //     return RedirectToAction(nameof(Profile));
-        // }
+        {
+            await RefreshProfileClaimsAsync(user, model);
+            TempData["ProfileWarning"] = "ลิงกินกล้วยอยู่บนหลังคานะ";
+            return RedirectToAction(nameof(Profile));
+        }
     }
 
     [HttpPost]
