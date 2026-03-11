@@ -442,12 +442,12 @@ public class GameGroupController : Controller
     [HttpPost]
     public async Task<IActionResult> Create(GameGroupInfo model)
     {
-        var resolvedGameId = await ResolveGameIdAsync(model.GameId);
+        // var resolvedGameId = await ResolveGameIdAsync(model.GameId);
 
         // Let Supabase generates ID
         var gameGroup = new GameGroupInfo
         {
-            GameId = resolvedGameId,
+            // GameId = resolvedGameId,
             Title = model.Title,
             Description = model.Description,
             ImageUrl = string.IsNullOrWhiteSpace(model.ImageUrl) ? null : model.ImageUrl,

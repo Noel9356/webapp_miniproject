@@ -19,16 +19,16 @@ public class GameGroupInfo : BaseModel
     [Column("description")]
     public string Description { get; set; } = "";
 
-    [JsonIgnore]
+    [Column("queue_type")]
     public string QueueType { get; set; } = "Casual";
 
-    [JsonIgnore]
+    [Column("rank_tier")]
     public string? RankTier { get; set; }
 
-    [JsonIgnore]
+    [Column("max_members")]
     public int MaxMembers { get; set; } = 5;
 
-    [JsonIgnore]
+    [Column("recruitment_status")]
     public string RecruitmentStatus { get; set; } = "Open";
 
     [JsonIgnore]

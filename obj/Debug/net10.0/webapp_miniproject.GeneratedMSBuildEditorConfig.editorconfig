@@ -19,77 +19,77 @@ build_property.TargetFrameworkIdentifier = .NETCoreApp
 build_property.TargetFrameworkVersion = v10.0
 build_property.RootNamespace = webapp_miniproject
 build_property.RootNamespace = webapp_miniproject
-build_property.ProjectDir = C:\Documents\GitHub\webapp_miniproject\
+build_property.ProjectDir = c:\Users\USER\Desktop\webapp_miniproject prime\webapp_miniproject\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 9.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Documents\GitHub\webapp_miniproject
+build_property.MSBuildProjectDirectory = c:\Users\USER\Desktop\webapp_miniproject prime\webapp_miniproject
 build_property._RazorSourceGeneratorDebug = 
 build_property.EffectiveAnalysisLevelStyle = 10.0
 build_property.EnableCodeStyleSeverity = 
 
-[C:/Documents/GitHub/webapp_miniproject/Views/Account/DeleteAccount.cshtml]
+[c:/Users/USER/Desktop/webapp_miniproject prime/webapp_miniproject/Views/Account/DeleteAccount.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxEZWxldGVBY2NvdW50LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Documents/GitHub/webapp_miniproject/Views/Account/Login.cshtml]
+[c:/Users/USER/Desktop/webapp_miniproject prime/webapp_miniproject/Views/Account/Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxMb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Documents/GitHub/webapp_miniproject/Views/Account/Profile.cshtml]
+[c:/Users/USER/Desktop/webapp_miniproject prime/webapp_miniproject/Views/Account/Profile.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxQcm9maWxlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Documents/GitHub/webapp_miniproject/Views/Account/SignUp.cshtml]
+[c:/Users/USER/Desktop/webapp_miniproject prime/webapp_miniproject/Views/Account/SignUp.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxTaWduVXAuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Documents/GitHub/webapp_miniproject/Views/GameGroup/Create.cshtml]
+[c:/Users/USER/Desktop/webapp_miniproject prime/webapp_miniproject/Views/GameGroup/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR2FtZUdyb3VwXENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Documents/GitHub/webapp_miniproject/Views/GameGroup/Details.cshtml]
+[c:/Users/USER/Desktop/webapp_miniproject prime/webapp_miniproject/Views/GameGroup/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR2FtZUdyb3VwXERldGFpbHMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Documents/GitHub/webapp_miniproject/Views/GameGroup/Edit.cshtml]
+[c:/Users/USER/Desktop/webapp_miniproject prime/webapp_miniproject/Views/GameGroup/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR2FtZUdyb3VwXEVkaXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Documents/GitHub/webapp_miniproject/Views/GameGroup/Index.cshtml]
+[c:/Users/USER/Desktop/webapp_miniproject prime/webapp_miniproject/Views/GameGroup/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR2FtZUdyb3VwXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Documents/GitHub/webapp_miniproject/Views/GameGroup/_GameGroups.cshtml]
+[c:/Users/USER/Desktop/webapp_miniproject prime/webapp_miniproject/Views/GameGroup/_GameGroups.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR2FtZUdyb3VwXF9HYW1lR3JvdXBzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Documents/GitHub/webapp_miniproject/Views/Home/Index.cshtml]
+[c:/Users/USER/Desktop/webapp_miniproject prime/webapp_miniproject/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Documents/GitHub/webapp_miniproject/Views/Home/Privacy.cshtml]
+[c:/Users/USER/Desktop/webapp_miniproject prime/webapp_miniproject/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Documents/GitHub/webapp_miniproject/Views/Shared/Error.cshtml]
+[c:/Users/USER/Desktop/webapp_miniproject prime/webapp_miniproject/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Documents/GitHub/webapp_miniproject/Views/Shared/_ValidationScriptsPartial.cshtml]
+[c:/Users/USER/Desktop/webapp_miniproject prime/webapp_miniproject/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Documents/GitHub/webapp_miniproject/Views/_ViewImports.cshtml]
+[c:/Users/USER/Desktop/webapp_miniproject prime/webapp_miniproject/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Documents/GitHub/webapp_miniproject/Views/_ViewStart.cshtml]
+[c:/Users/USER/Desktop/webapp_miniproject prime/webapp_miniproject/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Documents/GitHub/webapp_miniproject/Views/Shared/_Layout.cshtml]
+[c:/Users/USER/Desktop/webapp_miniproject prime/webapp_miniproject/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-1jzn7ncecp

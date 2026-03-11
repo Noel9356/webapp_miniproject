@@ -35,7 +35,10 @@
 
                     <div class="group-card-body">
                         <div class="group-meta-row mb-2">
-                            <span class="queue-badge @(gameGroup.QueueType == "Competitive" ? "badge-competitive" : "badge-casual")">@gameGroup.QueueType</span>
+                            @if (!string.IsNullOrWhiteSpace(gameGroup.QueueType))
+                            {
+                                <span class="queue-badge @(gameGroup.QueueType == "Competitive" ? "badge-competitive" : "badge-casual")">@gameGroup.QueueType</span>
+                            }
                             @if (!string.IsNullOrWhiteSpace(gameGroup.RankTier))
                             {
                                 <span class="rank-badge">@gameGroup.RankTier</span>
