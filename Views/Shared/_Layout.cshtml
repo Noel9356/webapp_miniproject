@@ -52,22 +52,18 @@
 
                     @if (User.Identity?.IsAuthenticated == true)
                     {
-                        <li class="user-name">
-                            @User.Identity.Name
-                        </li>
+                        <li class="profile">
 
-                        <li>
-                            <a asp-controller="Account" asp-action="DeleteAccount" class="btn btn-danger btn-sm">
-                                Delete
-                            </a>
-                        </li>
+                            <span class="user-name">
+                                👤 @User.Identity.Name
+                            </span>
 
-                        <li>
                             <form asp-controller="Account" asp-action="Logout" method="post">
-                                <button type="submit" class="btn btn-secondary btn-sm">
-                                    Sign out
+                                <button class="logout-link">
+                                    Logout
                                 </button>
                             </form>
+
                         </li>
                     }
                     else
