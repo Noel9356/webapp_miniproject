@@ -110,15 +110,10 @@
                 <div class="games-rail" id="gamesRail">
                     @foreach (var game in Model)
                     {
-                        var preview = game.GameGroupInfos.FirstOrDefault()?.ImageUrl;
                         var fallbackCover = GetGameCoverUrl(game.Name);
                         var titleFallbackCover = $"https://placehold.co/600x300/1b2743/eaf0ff?text={System.Uri.EscapeDataString(game.Name)}";
                         <button type="button" class="game-chip rgb-frame" data-game-id="@game.Id" title="@game.Name">
-                            @if (!string.IsNullOrWhiteSpace(preview))
-                            {
-                                <img src="@preview" alt="@game.Name" loading="lazy" onerror="this.onerror=null;this.src='@titleFallbackCover';" />
-                            }
-                            else if (!string.IsNullOrWhiteSpace(fallbackCover))
+                            @if (!string.IsNullOrWhiteSpace(fallbackCover))
                             {
                                 <img src="@fallbackCover" alt="@game.Name" loading="lazy" onerror="this.onerror=null;this.src='@titleFallbackCover';" />
                             }
@@ -142,12 +137,54 @@
 
 @section Scripts {
     <script>
+        let countdownRefreshPending = false;
+
         function debounce(fn, wait) {
             let t = null;
             return function (...args) {
                 clearTimeout(t);
                 t = setTimeout(() => fn.apply(this, args), wait);
             };
+        }
+
+        function formatCountdown(milliseconds) {
+            const totalSeconds = Math.max(0, Math.ceil(milliseconds / 1000));
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+        }
+
+        function refreshGroupCountdowns() {
+            let expiredVisible = false;
+
+            document.querySelectorAll("[data-group-expire-at]").forEach((badge) => {
+                const expireAt = Date.parse(badge.dataset.groupExpireAt || "");
+                if (Number.isNaN(expireAt)) {
+                    return;
+                }
+
+                if (badge.dataset.groupLocked === "true") {
+                    badge.textContent = "Full roster";
+                    return;
+                }
+
+                const remaining = expireAt - Date.now();
+                if (remaining <= 0) {
+                    badge.textContent = "Expired";
+                    expiredVisible = true;
+                    return;
+                }
+
+                badge.textContent = `Time left ${formatCountdown(remaining)}`;
+            });
+
+            if (expiredVisible && !countdownRefreshPending) {
+                countdownRefreshPending = true;
+                window.setTimeout(() => {
+                    countdownRefreshPending = false;
+                    fetchFiltered();
+                }, 900);
+            }
         }
 
         async function fetchFiltered() {
@@ -170,6 +207,7 @@
                 const res = await fetch(url, { headers: { "X-Requested-With": "XMLHttpRequest" } });
                 if (!res.ok) throw new Error("network");
                 document.getElementById("contentArea").innerHTML = await res.text();
+                refreshGroupCountdowns();
             } catch (e) {
                 console.error("fetchFiltered error", e);
             }
@@ -289,5 +327,7 @@
 
         renderFilterRankOptions();
         toggleRankFilter();
+        refreshGroupCountdowns();
+        window.setInterval(refreshGroupCountdowns, 1000);
     </script>
 }

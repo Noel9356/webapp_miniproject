@@ -7,6 +7,8 @@ namespace webapp_miniproject.Controllers;
 
 public class GameGroupController : Controller
 {
+    private static readonly TimeSpan GroupExpiryWindow = TimeSpan.FromMinutes(30);
+
     private readonly Supabase.Client _supabase;
 
     private static readonly string[] ExtraGameCatalog =
@@ -87,21 +89,88 @@ public class GameGroupController : Controller
 
         var groups = gameGroupsResponse.Models;
 
-        foreach (var game in gamesResponse.Models)
+        foreach (var group in groups)
         {
-            game.GameGroupInfos = groups
-                .Where(g => g.GameId == game.Id)
-                .ToList();
-
-            foreach (var group in game.GameGroupInfos)
-            {
-                group.ParseMetaFromDescription();
-            }
+            group.ParseMetaFromDescription();
         }
 
-        ApplyJoinStats(gamesResponse.Models.SelectMany(g => g.GameGroupInfos), joinRequests);
+        ApplyJoinStats(groups, joinRequests);
+        await CleanupExpiredGroupsAsync(groups);
+
+        var activeGroups = groups
+            .Where(group => !IsExpiredIncomplete(group))
+            .ToList();
+
+        foreach (var game in gamesResponse.Models)
+        {
+            game.GameGroupInfos = activeGroups
+                .Where(g => g.GameId == game.Id)
+                .ToList();
+        }
 
         return gamesResponse.Models.OrderBy(g => g.Name).ToList();
+    }
+
+    private static bool IsExpiredIncomplete(GameGroupInfo group)
+    {
+        if (group.CurrentMemberCount >= group.MaxMembers)
+        {
+            return false;
+        }
+
+        return group.CreatedAtUtc.Add(GroupExpiryWindow) <= DateTime.UtcNow;
+    }
+
+    private async Task CleanupExpiredGroupsAsync(IEnumerable<GameGroupInfo> groups)
+    {
+        var expiredIds = groups
+            .Where(IsExpiredIncomplete)
+            .Select(group => group.Id)
+            .Distinct()
+            .ToList();
+
+        if (!expiredIds.Any())
+        {
+            return;
+        }
+
+        await DeleteGroupsCascadeAsync(expiredIds);
+    }
+
+    private async Task DeleteGroupsCascadeAsync(IEnumerable<int> groupIds)
+    {
+        foreach (var groupId in groupIds.Distinct())
+        {
+            try
+            {
+                await _supabase
+                    .From<GroupJoinRequestInfo>()
+                    .Where(r => r.GroupId == groupId)
+                    .Delete();
+            }
+            catch
+            {
+            }
+
+            await _supabase
+                .From<GameGroupInfo>()
+                .Where(g => g.Id == groupId)
+                .Delete();
+        }
+    }
+
+    private async Task<IActionResult?> HandleExpiredGroupAsync(GameGroupInfo group, IEnumerable<GroupJoinRequestInfo> groupRequests)
+    {
+        ApplyJoinStats(new[] { group }, groupRequests);
+
+        if (!IsExpiredIncomplete(group))
+        {
+            return null;
+        }
+
+        await DeleteGroupsCascadeAsync(new[] { group.Id });
+        TempData["Error"] = "This post expired after 30 minutes because the group was not full.";
+        return RedirectToAction(nameof(Index));
     }
 
     private async Task<List<GroupJoinRequestInfo>> FetchJoinRequestsSafeAsync()
@@ -231,6 +300,12 @@ public class GameGroupController : Controller
 
         var allRequests = await FetchJoinRequestsSafeAsync();
         var groupRequests = allRequests.Where(r => r.GroupId == id).ToList();
+        var expiredRedirect = await HandleExpiredGroupAsync(gameGroup, groupRequests);
+        if (expiredRedirect is not null)
+        {
+            return expiredRedirect;
+        }
+
         var approvedRequests = groupRequests
             .Where(r => r.Status.Equals("Approved", StringComparison.OrdinalIgnoreCase))
             .ToList();
@@ -310,6 +385,13 @@ public class GameGroupController : Controller
         }
 
         var allRequests = await FetchJoinRequestsSafeAsync();
+        var groupRequests = allRequests.Where(r => r.GroupId == id).ToList();
+        var expiredRedirect = await HandleExpiredGroupAsync(gameGroup, groupRequests);
+        if (expiredRedirect is not null)
+        {
+            return expiredRedirect;
+        }
+
         var myRequest = allRequests
             .Where(r => r.GroupId == id && r.UserId == CurrentUserId.Value)
             .OrderByDescending(r => r.UpdatedAt)
@@ -364,6 +446,22 @@ public class GameGroupController : Controller
     public async Task<IActionResult> CancelRequest(int id)
     {
         var allRequests = await FetchJoinRequestsSafeAsync();
+        var groupRequests = allRequests.Where(r => r.GroupId == id).ToList();
+        var groupResponse = await _supabase
+            .From<GameGroupInfo>()
+            .Where(g => g.Id == id)
+            .Get();
+
+        var gameGroup = groupResponse.Models.FirstOrDefault();
+        if (gameGroup is null) return NotFound();
+        gameGroup.ParseMetaFromDescription();
+
+        var expiredRedirect = await HandleExpiredGroupAsync(gameGroup, groupRequests);
+        if (expiredRedirect is not null)
+        {
+            return expiredRedirect;
+        }
+
         var myRequest = allRequests
             .FirstOrDefault(r => r.GroupId == id && r.UserId == CurrentUserId!.Value && r.Status == "Pending");
 
@@ -385,6 +483,22 @@ public class GameGroupController : Controller
     public async Task<IActionResult> Leave(int id)
     {
         var allRequests = await FetchJoinRequestsSafeAsync();
+        var groupRequests = allRequests.Where(r => r.GroupId == id).ToList();
+        var groupResponse = await _supabase
+            .From<GameGroupInfo>()
+            .Where(g => g.Id == id)
+            .Get();
+
+        var gameGroup = groupResponse.Models.FirstOrDefault();
+        if (gameGroup is null) return NotFound();
+        gameGroup.ParseMetaFromDescription();
+
+        var expiredRedirect = await HandleExpiredGroupAsync(gameGroup, groupRequests);
+        if (expiredRedirect is not null)
+        {
+            return expiredRedirect;
+        }
+
         var myRequest = allRequests
             .FirstOrDefault(r => r.GroupId == id && r.UserId == CurrentUserId!.Value && r.Status == "Approved");
 
@@ -421,6 +535,13 @@ public class GameGroupController : Controller
         if (gameGroup.CreatedBy != CurrentUserId) return Forbid();
 
         var allRequests = await FetchJoinRequestsSafeAsync();
+        var groupRequests = allRequests.Where(r => r.GroupId == id).ToList();
+        var expiredRedirect = await HandleExpiredGroupAsync(gameGroup, groupRequests);
+        if (expiredRedirect is not null)
+        {
+            return expiredRedirect;
+        }
+
         var approvedRequest = allRequests.FirstOrDefault(r =>
             r.Id == requestId
             && r.GroupId == id
@@ -473,6 +594,13 @@ public class GameGroupController : Controller
         gameGroup.ParseMetaFromDescription();
 
         var allRequests = await FetchJoinRequestsSafeAsync();
+        var groupRequests = allRequests.Where(r => r.GroupId == id).ToList();
+        var expiredRedirect = await HandleExpiredGroupAsync(gameGroup, groupRequests);
+        if (expiredRedirect is not null)
+        {
+            return expiredRedirect;
+        }
+
         var request = allRequests.FirstOrDefault(r => r.Id == requestId);
         if (request is null)
         {

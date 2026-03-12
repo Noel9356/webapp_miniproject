@@ -40,6 +40,11 @@
                         }
                         <span class="member-badge">@(memberCount + 1)/@Model.MaxMembers players</span>
                         <span class="status-badge status-@Model.EffectiveStatus.ToLowerInvariant()">@Model.EffectiveStatus</span>
+                        <span class="timer-badge timer-badge-detail @((Model.CurrentMemberCount >= Model.MaxMembers) ? "timer-badge-locked" : string.Empty)"
+                              data-group-expire-at="@Model.ExpiresAtUtc.ToString("O")"
+                              data-group-locked="@((Model.CurrentMemberCount >= Model.MaxMembers) ? "true" : "false")">
+                            @((Model.CurrentMemberCount >= Model.MaxMembers) ? "Full roster" : "Time left 30:00")
+                        </span>
                     </div>
 
                     @if (TempData["Message"] is string msg)
@@ -216,3 +221,45 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        (function () {
+            const timer = document.querySelector('.timer-badge-detail[data-group-expire-at]');
+            if (!timer) {
+                return;
+            }
+
+            const expireAt = Date.parse(timer.dataset.groupExpireAt || '');
+            if (Number.isNaN(expireAt)) {
+                return;
+            }
+
+            if (timer.dataset.groupLocked === 'true') {
+                timer.textContent = 'Full roster';
+                return;
+            }
+
+            const formatCountdown = (milliseconds) => {
+                const totalSeconds = Math.max(0, Math.ceil(milliseconds / 1000));
+                const minutes = Math.floor(totalSeconds / 60);
+                const seconds = totalSeconds % 60;
+                return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            };
+
+            const tick = () => {
+                const remaining = expireAt - Date.now();
+                if (remaining <= 0) {
+                    timer.textContent = 'Expired';
+                    window.setTimeout(() => window.location.reload(), 900);
+                    return;
+                }
+
+                timer.textContent = `Time left ${formatCountdown(remaining)}`;
+                window.setTimeout(tick, 1000);
+            };
+
+            tick();
+        })();
+    </script>
+}

@@ -7,6 +7,49 @@ namespace webapp_miniproject.Models;
 [Table("GameGroupDb")]
 public class GameGroupInfo : BaseModel
 {
+    private static readonly TimeSpan BangkokOffset = TimeSpan.FromHours(7);
+
+    private static DateTime NormalizeCalendarYear(DateTime value)
+    {
+        var normalized = value;
+
+        while (normalized.Year > DateTime.UtcNow.Year + 100 && normalized.Year - 543 >= 1)
+        {
+            normalized = normalized.AddYears(-543);
+        }
+
+        return normalized;
+    }
+
+    private static DateTime NormalizeUtcTimestamp(DateTime value)
+    {
+        var normalizedValue = NormalizeCalendarYear(value);
+
+        if (normalizedValue.Kind == DateTimeKind.Unspecified)
+        {
+            var asUtc = DateTime.SpecifyKind(normalizedValue, DateTimeKind.Utc);
+            DateTime asBangkokUtc;
+
+            try
+            {
+                asBangkokUtc = new DateTimeOffset(normalizedValue, BangkokOffset).UtcDateTime;
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                return asUtc;
+            }
+
+            if (asUtc > DateTime.UtcNow.AddHours(1) && asBangkokUtc <= DateTime.UtcNow.AddHours(1))
+            {
+                return asBangkokUtc;
+            }
+
+            return asUtc;
+        }
+
+        return NormalizeCalendarYear(normalizedValue.ToUniversalTime());
+    }
+
     [PrimaryKey("id", false)]
     public int Id { get; set; }
 
@@ -54,6 +97,12 @@ public class GameGroupInfo : BaseModel
 
     [JsonIgnore]
     public string PlainDescription { get; set; } = "";
+
+    [JsonIgnore]
+    public DateTime CreatedAtUtc => NormalizeUtcTimestamp(CreatedAt);
+
+    [JsonIgnore]
+    public DateTime ExpiresAtUtc => CreatedAtUtc.AddMinutes(30);
 
     [JsonIgnore]
     public string EffectiveStatus
