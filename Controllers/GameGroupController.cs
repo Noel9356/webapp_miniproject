@@ -237,8 +237,12 @@ public class GameGroupController : Controller
         // Fetch all requests for this group, then split by status
         var allRequests = await FetchJoinRequestsSafeAsync();
         var groupRequests = allRequests.Where(r => r.GroupId == id).ToList();
-        var approvedRequests = groupRequests.Where(r => r.Status == "Approved").ToList();
-        var pendingRequests = groupRequests.Where(r => r.Status == "Pending").ToList();
+        var approvedRequests = groupRequests
+            .Where(r => r.Status.Equals("Approved", StringComparison.OrdinalIgnoreCase))
+            .ToList();
+        var pendingRequests = groupRequests
+            .Where(r => r.Status.Equals("Pending", StringComparison.OrdinalIgnoreCase))
+            .ToList();
 
         // Resolve usernames for all approved members in one query
         var allUsers = (await _supabase.From<UserInfo>().Get()).Models;
@@ -256,6 +260,7 @@ public class GameGroupController : Controller
 
         // For owner: pair each pending request with the requester's username
         List<(GroupJoinRequestInfo Request, string Username)> pendingWithUsers = new();
+        List<(GroupJoinRequestInfo Request, string Username)> approvedWithUsers = new();
         if (CurrentUserId == gameGroup.CreatedBy)
         {
             var pendingUserIds = pendingRequests.Select(r => r.UserId).ToHashSet();
@@ -265,6 +270,14 @@ public class GameGroupController : Controller
             pendingWithUsers = pendingRequests
                 .Select(r => (r, pendingUsers.TryGetValue(r.UserId, out var u) ? u.Username : $"User #{r.UserId}"))
                 .ToList();
+
+            var approvedUsers = allUsers
+                .Where(u => approvedUserIds.Contains(u.Id))
+                .ToDictionary(u => u.Id);
+
+            approvedWithUsers = approvedRequests
+                .Select(r => (r, approvedUsers.TryGetValue(r.UserId, out var u) ? u.Username : $"User #{r.UserId}"))
+                .ToList();
         }
 
         ViewBag.IsOwner = CurrentUserId is not null && gameGroup.CreatedBy == CurrentUserId;
@@ -273,6 +286,7 @@ public class GameGroupController : Controller
         ViewBag.PendingCount = pendingRequests.Count;
         ViewBag.myRequest = myRequest;
         ViewBag.PendingRequests = pendingWithUsers;
+        ViewBag.ApprovedMembers = approvedWithUsers;
         ViewBag.Owner = allUsers.FirstOrDefault(u => u.Id == gameGroup.CreatedBy);
 
         return View(gameGroup);
@@ -401,6 +415,56 @@ public class GameGroupController : Controller
                 .Set(r => r.Status, "Left")
                 .Set(r => r.UpdatedAt, DateTime.UtcNow)
                 .Update();
+        }
+
+        return RedirectToAction(nameof(Details), new { id });
+    }
+
+    [Authorize]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> KickMember(int id, int requestId)
+    {
+        if (CurrentUserId is null)
+        {
+            return RedirectToAction("Login", "Account", new { returnUrl = Url.Action(nameof(Details), new { id }) });
+        }
+
+        var groupResponse = await _supabase
+            .From<GameGroupInfo>()
+            .Where(g => g.Id == id)
+            .Get();
+
+        var gameGroup = groupResponse.Models.FirstOrDefault();
+        if (gameGroup is null) return NotFound();
+        if (gameGroup.CreatedBy != CurrentUserId) return Forbid();
+
+        var allRequests = await FetchJoinRequestsSafeAsync();
+        var approvedRequest = allRequests.FirstOrDefault(r =>
+            r.Id == requestId
+            && r.GroupId == id
+            && r.Status.Equals("Approved", StringComparison.OrdinalIgnoreCase));
+
+        if (approvedRequest is null)
+        {
+            TempData["Error"] = "Member not found or is no longer active in this group.";
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        try
+        {
+            await _supabase
+                .From<GroupJoinRequestInfo>()
+                .Where(r => r.Id == approvedRequest.Id)
+                .Set(r => r.Status, "Removed")
+                .Set(r => r.UpdatedAt, DateTime.UtcNow)
+                .Update();
+
+            TempData["Message"] = "Member removed from the group.";
+        }
+        catch
+        {
+            TempData["Error"] = "Could not remove this member right now.";
         }
 
         return RedirectToAction(nameof(Details), new { id });

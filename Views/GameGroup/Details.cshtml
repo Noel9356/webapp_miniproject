@@ -9,10 +9,11 @@
     var owner = ViewBag.Owner as webapp_miniproject.Models.UserInfo;
     var myRequest = ViewBag.MyRequest as webapp_miniproject.Models.GroupJoinRequestInfo;
     var pendingRequests = ViewBag.PendingRequests as List<(webapp_miniproject.Models.GroupJoinRequestInfo Request, string Username)> ?? new();
+    var approvedMembers = ViewBag.ApprovedMembers as List<(webapp_miniproject.Models.GroupJoinRequestInfo Request, string Username)> ?? new();
     var isLoggedIn = User.Identity?.IsAuthenticated == true;
     var isApproved = string.Equals(myRequest?.Status, "Approved", StringComparison.OrdinalIgnoreCase);
     var isPending = string.Equals(myRequest?.Status, "Pending", StringComparison.OrdinalIgnoreCase);
-    var canRequestAgain = myRequest?.Status is "Rejected" or "Canceled" or "Left";
+    var canRequestAgain = myRequest?.Status is "Rejected" or "Canceled" or "Left" or "Removed";
     @* var pendingRequests = ViewBag.PendingJoinRequests as List<webapp_miniproject.Models.GroupJoinRequestInfo> ?? new(); *@
     @* var currentUserJoinStatus = ViewBag.CurrentUserJoinStatus as string; *@
 }
@@ -125,11 +126,19 @@
                         <ul class="list-unstyled mb-0">
                             @foreach (var user in members)
                             {
-                                <li class="text-muted small py-1 border-bottom border-secondary">
+                                var approvedMember = approvedMembers.FirstOrDefault(m => m.Request.UserId == user.Id);
+                                <li class="text-muted small py-2 border-bottom border-secondary d-flex justify-content-between align-items-center gap-2 flex-wrap">
                                     <a asp-controller="Account" asp-action="UserProfile" asp-route-id="@user.Id" class="link-light text-decoration-none">@user.Username</a>
                                     @if (user.Id == Model.CreatedBy)
                                     {
                                         <span class="badge bg-secondary ms-1">owner</span>
+                                    }
+                                    else if (isOwner && approvedMember.Request is not null)
+                                    {
+                                        <form asp-action="KickMember" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('Remove this member from the group?');">
+                                            <input type="hidden" name="requestId" value="@approvedMember.Request.Id" />
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">Kick</button>
+                                        </form>
                                     }
                                 </li>
                             }
