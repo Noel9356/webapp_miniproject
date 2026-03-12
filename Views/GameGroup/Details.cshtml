@@ -65,7 +65,7 @@
                     <p class="text-light">@Model.Description</p>
 
                     <div class="small text-muted mb-3">
-                        Created @Model.CreatedAt.ToString("MMM d, yyyy") • @pendingCount pending request(s)
+                        Created @Model.CreatedAtUtc.ToString("MMM d, yyyy") • @pendingCount pending request(s)
                     </div>
 
                     @if (owner is not null)
